@@ -43,7 +43,6 @@ Open `index.html`. This is the test Dapp that is included in the Snaps template.
 ```HTML
    <button class="connect">Connect</button>
    <button class="sendHello">Send Hello</button>
-   <br>
    
    <form id="storeAddress">
    <fieldset>
