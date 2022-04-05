@@ -34,11 +34,11 @@ Open `snap.manifest.json`. This file has the main configuration details for your
 },
 ```
 
-This will enable the use of two functions: `setStorageItem` and `getStorageItem`. These are key-value storage methods similar `Window.localStorage`. 
+This will enable the use of two functions: `setStorageItem` and `getStorageItem`. These are key-value storage functions similar to `Window.localStorage`. With these functions, you can save and retrieve data in your Snap.
 
 ### Storing Addresses 
 
-Open `index.html`. This is the test Dapp that is included in the Snaps template. Add a form that can be used to store an address and label, like so: 
+Open `index.html`. This is the test Dapp that is included in the Snaps template. Add a form before the closing `</body>` tag that can be used to store an address and label, like so: 
 
 ```HTML
     <button class="connect">Connect</button>
