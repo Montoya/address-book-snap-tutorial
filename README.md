@@ -73,7 +73,7 @@ async function storeAddress (e) {
       const response = await ethereum.request({
          method: 'wallet_invokeSnap', 
          params: [snapId, {
-           method: 'hello',
+           method: 'storeAddress',
            nameToStore: name, 
            addressToStore: address
          }]
