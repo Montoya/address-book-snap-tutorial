@@ -29,8 +29,8 @@ Open `snap.manifest.json`. This file has the main configuration details for your
 
 ```JSON
 "initialPermissions": {
-   "snap_confirm": {},
-   "snap_manageState": {}
+  "snap_confirm": {},
+  "snap_manageState": {}
 },
 ```
 
@@ -41,18 +41,46 @@ This will enable the use of two functions: `setStorageItem` and `getStorageItem`
 Open `index.html`. This is the test Dapp that is included in the Snaps template. Add a form before the closing `</body>` tag that can be used to store an address and label, like so: 
 
 ```HTML
-   <button class="connect">Connect</button>
-   <button class="sendHello">Send Hello</button>
-   
-   <form id="storeAddress">
-   <fieldset>
+  <button class="connect">Connect</button>
+  <button class="sendHello">Send Hello</button>
+
+  <form id="storeAddress">
+    <fieldset>
       <legend>Save an address to your address book</legend>
       <label for="nameToStore">Name</label>
       <input type="text" id="nameToStore" name="nameToStore"><br>
       <label for="addressToStore">Address</label> 
       <input type="text" id="addressToStore" name="addressToStore"><br>
       <input type="submit" id="storeAddress" value="Save">
-   </fieldset>
-   </form>
+    </fieldset>
+  </form>
 </body>
-  ```
+```
+
+  Next, add some Javascript before the closing `</script>` tag to capture the form input and pass that info to the Snap: 
+
+```Javascript
+const storeAddressForm = document.getElementById('storeAddress')
+storeAddressForm.addEventListener('submit', storeAddress)
+
+async function storeAddress (e) {
+   e.preventDefault() // to prevent default form behavior 
+
+   const name = document.getElementById('nameToStore').value
+   const address = document.getElementById('addressToStore').value
+
+   try { 
+      const response = await ethereum.request({
+         method: 'wallet_invokeSnap', 
+         params: [snapId, {
+           method: 'hello',
+           nameToStore: name, 
+           addressToStore: address
+         }]
+      })
+   } catch (err) { 
+      console.error(err)
+      alert('Problem happened: ' + err.message || err)
+   }
+}
+</script>

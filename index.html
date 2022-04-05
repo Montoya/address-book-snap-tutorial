@@ -72,5 +72,29 @@
         alert('Problem happened: ' + err.message || err)
       }
     }
+
+    const storeAddressForm = document.getElementById('storeAddress')
+    storeAddressForm.addEventListener('submit', storeAddress)
+
+    async function storeAddress (e) {
+      e.preventDefault() // to prevent default form behavior 
+
+      const name = document.getElementById('nameToStore').value
+      const address = document.getElementById('addressToStore').value
+
+      try { 
+        const response = await ethereum.request({
+          method: 'wallet_invokeSnap', 
+          params: [snapId, {
+            method: 'hello',
+            nameToStore: name, 
+            addressToStore: address
+          }]
+        })
+      } catch (err) { 
+        console.error(err)
+        alert('Problem happened: ' + err.message || err)
+      }
+    }
   </script>
 </html>
