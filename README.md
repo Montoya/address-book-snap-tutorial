@@ -26,3 +26,34 @@ First, navigate to the [@MetaMask/template-snap](https://github.com/MetaMask/tem
 ### Adding the Manage State Permission to your Snap
 
 Open `snap.manifest.json`. This file has the main configuration details for your Snap. To enable your Snap to store an address book, you need to request the "manage state" permission. You can do this by modifying `initialPermissions` to include this permission, like so: 
+
+```JSON
+"initialPermissions": {
+   "snap_confirm": {},
+   "snap_manageState": {}
+},
+```
+
+This will enable the use of two functions: `setStorageItem` and `getStorageItem`. These are key-value storage methods similar `Window.localStorage`. 
+
+### Storing Addresses 
+
+Open `index.html`. This is the test Dapp that is included in the Snaps template. Add a form that can be used to store an address and label, like so: 
+
+```HTML
+    <button class="connect">Connect</button>
+    <button class="sendHello">Send Hello</button>
+    <br>
+    
+    <form id="storeAddress">
+      <fieldset>
+        <legend>Save an address to your address book</legend>
+        <label for="nameToStore">Name</label>
+        <input type="text" id="nameToStore" name="nameToStore"><br>
+        <label for="addressToStore">Address</label> 
+        <input type="text" id="addressToStore" name="addressToStore"><br>
+        <input type="submit" id="storeAddress" value="Save">
+      </fieldset>
+    </form>
+  </body>
+  ```

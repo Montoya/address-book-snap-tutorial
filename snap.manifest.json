@@ -18,7 +18,8 @@
     }
   },
   "initialPermissions": {
-    "snap_confirm": {}
+    "snap_confirm": {},
+    "snap_manageState": {}
   },
   "manifestVersion": "0.1"
 }
