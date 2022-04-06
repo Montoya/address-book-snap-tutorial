@@ -122,4 +122,86 @@ yarn run serve
 
 Open the dapp in Google Chrome and click "Connect" to connect and install the Snap, then add a name and address to the form and click "Save." You should see a confirmation window like the following: 
 
-<img src="tutorial-assets/tutorial-first-confirm.png" width="692" height="452" alt="Fist Confirmation Attempt">
+<img src="tutorial-assets/tutorial-first-confirm.png" width="692" height="452" alt="First Confirmation Attempt">
+
+This is great, but the goal is not to just show the inputs. The goal is to store them! Let's solve that in the next section. 
+
+### Actually Storing Addresses
+
+First, initialize the Snap's state with an empty address book. Add the following code in `src/index.js`: 
+
+```Javascript
+wallet.registerRpcMessageHandler(async (originString, requestObject) => {
+
+  const state = await wallet.request({
+    method: 'snap_manageState',
+    params: ['get'],
+  });
+
+  if (!state) {
+    // initialize state if empty and set default data
+    await wallet.request({
+      method: 'snap_manageState',
+      params: ['update', {book:[]}],
+    });
+  }
+
+  switch (requestObject.method) {
+```
+
+This code retrieves the current data stored in the Snap's state, and if that data is not set, initalizes it with an empty address book object: `{book:[]}`. Note that `await` is used because these `wallet.request` calls are normally asynchronous but they need to be executed synchronously here. 
+
+Next, add some code to store the name and address from the form before displaying the confirmation window: 
+
+```Javascript
+switch (requestObject.method) {
+  case 'storeAddress': 
+    let state = await wallet.request({
+      method: 'snap_manageState', 
+      params: ['get'], 
+    }); 
+    let address_book = state.book; 
+    address_book.push({
+      name:requestObject.nameToStore,
+      address:requestObject.addressToStore
+    });
+    await wallet.request({
+      method: 'snap_manageState', 
+      params: ['update', {book:address_book}], 
+    }); 
+    return wallet.request({
+      method: 'snap_confirm', 
+```
+
+This code gets the currently stored address book, adds the new name and address to the end of the array, and then stores that back into the state. 
+
+Finally, display the result of this request in the confirmation window: 
+
+```Javascript
+  return wallet.request({
+    method: 'snap_confirm', 
+    params: [
+      {
+        prompt: `Hello, ${originString}!`, 
+        description: 
+          'The address has been saved to your address book',
+        textAreaContent: 
+          `Name: ${requestObject.nameToStore}\n`+
+          `Address: ${requestObject.addressToStore}\n`+
+          `Addresses in book: ${address_book.length}`,  
+      }, 
+    ], 
+  }); 
+case 'hello':
+```
+
+Build and run your Snap again, reload the companion Dapp, and follow the same steps to add an address. You should see a result like this: 
+
+<img src="tutorial-assets/tutorial-first-confirm.png" width="692" height="406" alt="Second Confirmation Attempt">
+
+You can continue adding addresses and clicking Save, and the number of addresses will increase each time, like so: 
+
+<img src="tutorial-assets/tutorial-third-confirm.png" width="692" height="402" alt="Third Confirmation Attempt">
+
+So far, so good! The next step is to try retrieving this data and using it. 
+

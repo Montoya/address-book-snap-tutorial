@@ -1,16 +1,44 @@
 wallet.registerRpcMessageHandler(async (originString, requestObject) => {
+
+  const state = await wallet.request({
+    method: 'snap_manageState',
+    params: ['get'],
+  });
+
+  if (!state) {
+    // initialize state if empty and set default data
+    await wallet.request({
+      method: 'snap_manageState',
+      params: ['update', {book:[]}],
+    });
+  }
+
   switch (requestObject.method) {
     case 'storeAddress': 
+      let state = await wallet.request({
+        method: 'snap_manageState', 
+        params: ['get'], 
+      }); 
+      let address_book = state.book; 
+      address_book.push({
+        name:requestObject.nameToStore,
+        address:requestObject.addressToStore
+      });
+      await wallet.request({
+        method: 'snap_manageState', 
+        params: ['update', {book:address_book}], 
+      }); 
       return wallet.request({
         method: 'snap_confirm', 
         params: [
           {
             prompt: `Hello, ${originString}!`, 
             description: 
-              'This custom confirmation is just for display purposes.',
+              'The address has been saved to your address book',
             textAreaContent: 
-              `Name to store: ${requestObject.nameToStore}\n`+
-              `Address to store: ${requestObject.addressToStore}`, 
+              `Name: ${requestObject.nameToStore}\n`+
+              `Address: ${requestObject.addressToStore}\n`+
+              `Addresses in book: ${address_book.length}`,  
           }, 
         ], 
       }); 
