@@ -57,7 +57,7 @@ Open `index.html`. This is the test Dapp that is included in the Snaps template.
 </body>
 ```
 
-  Next, add some Javascript before the closing `</script>` tag to capture the form input and pass that info to the Snap: 
+Next, add some Javascript before the closing `</script>` tag to capture the form input and pass that info to the Snap: 
 
 ```Javascript
 const storeAddressForm = document.getElementById('storeAddress')
@@ -85,3 +85,41 @@ async function storeAddress (e) {
 }
 </script>
 ```
+
+Finally, add a case to `src/index.js` to handle receiving this request: 
+
+```Javascript
+wallet.registerRpcMessageHandler(async (originString, requestObject) => {
+  switch (requestObject.method) {
+    case 'storeAddress': 
+      return wallet.request({
+        method: 'snap_confirm', 
+        params: [
+          {
+            prompt: `Hello, ${originString}!`, 
+            description: 
+              'This custom confirmation is just for display purposes.',
+            textAreaContent: 
+              `Name to store: ${requestObject.nameToStore}\n`+
+              `Address to store: ${requestObject.addressToStore}`, 
+          }, 
+        ], 
+      }); 
+    case 'hello':
+```
+
+This is just like the `hello` case, but instead it displays the input name and address. Note the backticks \`\` used instead of apostrophes '' for strings that contain variable references. Also, note that `requestObject` is the object passed to the Snap with the method name and any optional parameters you include. 
+
+Once you have made these changes, you can run the following commands on the command line to build and test your Snap: 
+
+```Shell
+yarn install
+
+yarn build
+
+yarn run serve
+```
+
+Open the dapp in Google Chrome and click "Connect" to connect and install the Snap, then add a name and address to the form and click "Save." You should see a confirmation window like the following: 
+
+<img src="tutorial-assets/tutorial-first-confirm.png" width="692" height="452" alt="Fist Confirmation Attempt">
