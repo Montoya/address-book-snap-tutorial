@@ -199,7 +199,7 @@ You can continue adding addresses and clicking Save, and the number of addresses
 
 <img src="tutorial-assets/tutorial-third-confirm.png" width="692" height="402" alt="Third Confirmation Attempt">
 
-So far, so good! The next step is to try retrieving this data and using it. 
+So far, so good! The next step is to try retrieving this data. 
 
 ### Getting Stored Addresses
 
