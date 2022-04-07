@@ -193,7 +193,7 @@ case 'hello':
 
 Build and run your Snap again, reload the companion Dapp, and follow the same steps to add an address. You should see a result like this: 
 
-<img src="tutorial-assets/tutorial-first-confirm.png" width="692" height="452" alt="Second Confirmation Attempt">
+<img src="tutorial-assets/tutorial-second-confirm.png" width="692" height="406" alt="Second Confirmation Attempt">
 
 You can continue adding addresses and clicking Save, and the number of addresses will increase each time, like so: 
 
