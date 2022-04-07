@@ -25,7 +25,8 @@
     <br/>
 
     <button class="connect">Connect</button>
-    <button class="sendHello">Send Hello</button>
+    <button class="sendHello">Send Hello</button> 
+    <button class="getAddresses">Get Addresses</button>
 
     <form id="storeAddress">
       <fieldset>
@@ -44,9 +45,11 @@
 
     const connectButton = document.querySelector('button.connect')
     const sendButton = document.querySelector('button.sendHello')
+    const getButton = document.querySelector('button.getAddresses'); 
 
     connectButton.addEventListener('click', connect)
     sendButton.addEventListener('click', send)
+    getButton.addEventListener('click',getAddresses); 
 
     // here we get permissions to interact with and install the snap
     async function connect () {
@@ -71,6 +74,26 @@
         console.error(err)
         alert('Problem happened: ' + err.message || err)
       }
+    }
+
+    async function getAddresses () { 
+      let response = []; 
+      try { 
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap', 
+          params: [snapId, {
+            method: 'retrieveAddresses'
+          }]
+        })
+      } catch (err) { 
+        console.error(err)
+        alert('Problem happened: ' + err.message || err)
+      }
+      let container = document.createElement('pre'); 
+      container.textContent = ''+response.map(function(item){
+          return `${item.name}: ${item.address}`; 
+        }).join("\n"); 
+      document.body.append(container); 
     }
 
     const storeAddressForm = document.getElementById('storeAddress')

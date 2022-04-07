@@ -227,7 +227,7 @@ This code does a quick string conversion of the address book object (`map` each 
 
 <img src="tutorial-assets/tutorial-show-addresses.png" width="362" height="284" alt="Third Confirmation Attempt">
 
-Note that you do not need to add addresses to the address book again before showing the addresses that are stored. The addresses you added earlier were persisted even after updating the Snap! The data was fetched with this code which you added earlier in this tutorial: 
+Note that you did not need to add addresses to the address book again before showing the addresses that are stored. The addresses you added earlier were persisted even after updating the Snap! The data was fetched with this code which you added earlier in this tutorial: 
 
 ```Javascript
 const state = await wallet.request({
@@ -239,3 +239,66 @@ const state = await wallet.request({
 As the Snap developer, you are responsible for managing this data &mdash; it's up to you to decide when to update it or clear it. 
 
 So now you have everything you need to store and retrieve data in a Snap! Read on to learn how to make this Snap a bit more useful. 
+
+### Providing an Address Book API
+
+Add another case to `src/index.js` to return the address book: 
+
+```Javascript
+  }); 
+case 'retrieveAddresses': 
+  return state.book; 
+case 'hello':
+```
+
+Add a button to `index.html` to retrieve addresses: 
+
+```HTML
+<button class="connect">Connect</button>
+<button class="sendHello">Send Hello</button> 
+<button class="getAddresses">Get Addresses</button>
+
+<form id="storeAddress">
+```
+
+And add the following code to the script section of `index.html` to retrieve and display the address book inside the Dapp: 
+
+```JavaScript
+const connectButton = document.querySelector('button.connect')
+const sendButton = document.querySelector('button.sendHello')
+const getButton = document.querySelector('button.getAddresses'); 
+
+connectButton.addEventListener('click', connect)
+sendButton.addEventListener('click', send)
+getButton.addEventListener('click',getAddresses); 
+```
+
+```JavaScript
+async function getAddresses () { 
+  let response = []; 
+  try { 
+    response = await ethereum.request({
+      method: 'wallet_invokeSnap', 
+      params: [snapId, {
+        method: 'retrieveAddresses'
+      }]
+    })
+  } catch (err) { 
+    console.error(err)
+    alert('Problem happened: ' + err.message || err)
+  }
+  let container = document.createElement('pre'); 
+  container.textContent = ''+response.map(function(item){
+      return `${item.name}: ${item.address}`; 
+    }).join("\n"); 
+  document.body.append(container); 
+}
+```
+
+This is very similar to the other button handlers, but instead of just invoking a Snap request, it captures the response from that request and then injects it into the Dapp webpage. Build and run the Snap again, refresh the Dapp page, click "Connect" and click "Get Addresses." You will see a result like the following: 
+
+<img src="tutorial-assets/tutorial-inject-addresses.png" width="574" height="459" alt="Third Confirmation Attempt">
+
+You now have a very simple API for making an address book avialable to Dapps. While this is far from being an elegant approach to making an address book inside of MetaMask, you have the foundation for storing and retrieving data with a custom Snap. Read on for some ideas on how to make this more elegant and secure. 
+
+_Coming soon..._

@@ -38,6 +38,8 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
           }, 
         ], 
       }); 
+    case 'retrieveAddresses': 
+      return state.book; 
     case 'hello':
       let address_book = state.book.map(function(item){
           return `${item.name}: ${item.address}`; 
