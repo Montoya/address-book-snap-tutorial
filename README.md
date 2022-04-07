@@ -227,7 +227,7 @@ This code does a quick string conversion of the address book object (`map` each 
 
 <img src="tutorial-assets/tutorial-show-addresses.png" width="362" height="284" alt="Third Confirmation Attempt">
 
-Note that you do not need to add addresses to the address book again before showing the addresses that are stored. The data in the wallet state is persisted even after updating the Snap! It is fetched from persistent storage with this code which you added earlier in this tutorial: 
+Note that you do not need to add addresses to the address book again before showing the addresses that are stored. The addresses you added earlier were persisted even after updating the Snap! The data was fetched with this code which you added earlier in this tutorial: 
 
 ```Javascript
 const state = await wallet.request({
