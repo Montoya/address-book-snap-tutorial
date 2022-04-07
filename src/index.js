@@ -1,15 +1,16 @@
 wallet.registerRpcMessageHandler(async (originString, requestObject) => {
 
-  let state = await wallet.request({
+  const state = await wallet.request({
     method: 'snap_manageState',
     params: ['get'],
   });
 
   if (!state) {
+    state = {book:[]}; 
     // initialize state if empty and set default data
     await wallet.request({
       method: 'snap_manageState',
-      params: ['update', {book:[]}],
+      params: ['update', state],
     });
   }
 

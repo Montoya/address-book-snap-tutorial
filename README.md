@@ -34,7 +34,7 @@ Open `snap.manifest.json`. This file has the main configuration details for your
 },
 ```
 
-This will enable the use of two functions: `setStorageItem` and `getStorageItem`. These are key-value storage functions similar to `Window.localStorage`. With these functions, you can save and retrieve data in your Snap.
+This will enable the use of the `snap_manageState` RPC method. With this method, you can save and retrieve data in your Snap.
 
 ### Storing Addresses 
 
@@ -120,7 +120,7 @@ yarn build
 yarn run serve
 ```
 
-Open the dapp in Google Chrome and click "Connect" to connect and install the Snap, then add a name and address to the form and click "Save." You should see a confirmation window like the following: 
+Open the dapp in Google Chrome and click "Connect" to connect and install the Snap, then enter a name and address in the form and click "Save." You should see a confirmation window like the following: 
 
 <img src="tutorial-assets/tutorial-first-confirm.png" width="692" height="452" alt="First Confirmation Attempt">
 
@@ -139,17 +139,18 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
   });
 
   if (!state) {
+    state = {book:[]}; 
     // initialize state if empty and set default data
     await wallet.request({
       method: 'snap_manageState',
-      params: ['update', {book:[]}],
+      params: ['update', state],
     });
   }
 
   switch (requestObject.method) {
 ```
 
-This code retrieves the current data stored in the Snap's state, and if that data is not set, initalizes it with an empty address book object: `{book:[]}`. Note that `await` is used because these `wallet.request` calls are normally asynchronous but they need to be executed synchronously here. 
+This code retrieves the current data stored in the Snap's state, and if that data is not set, initalizes it with an object containing an empty array for the address book: `{book:[]}`. Note that `await` is used because these `wallet.request` calls are normally asynchronous but they need to be executed synchronously here. 
 
 Next, add some code to store the name and address from the form before displaying the confirmation window: 
 
@@ -226,6 +227,15 @@ This code does a quick string conversion of the address book object (`map` each 
 
 <img src="tutorial-assets/tutorial-show-addresses.png" width="362" height="284" alt="Third Confirmation Attempt">
 
-Note that you do not need to add addresses to the address book again before showing the addresses that are stored. The data in the wallet state is persisted even after updating the Snap! As the Snap developer, you can manage this data &mdash; it's up to you to decide when to clear this data. 
+Note that you do not need to add addresses to the address book again before showing the addresses that are stored. The data in the wallet state is persisted even after updating the Snap! It is fetched from persistent storage with this code which you added earlier in this tutorial: 
+
+```Javascript
+const state = await wallet.request({
+  method: 'snap_manageState',
+  params: ['get'],
+});
+```
+
+As the Snap developer, you are responsible for managing this data &mdash; it's up to you to decide when to update it or clear it. 
 
 So now you have everything you need to store and retrieve data in a Snap! Read on to learn how to make this Snap a bit more useful. 
