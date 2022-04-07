@@ -1,4 +1,4 @@
-# @Montoya/address-book-snap
+# @Montoya/address-book-snap-tutorial
 
 A Snap example based on [@MetaMask/template-snap](https://github.com/MetaMask/template-snap). Read below for a tutorial!
 
