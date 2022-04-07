@@ -38,6 +38,11 @@
         <input type="submit" id="storeAddress" value="Save">
       </fieldset>
     </form>
+
+    <div>
+      <p>My address book</p>
+      <pre id="addressBook"></pre>
+    </div>
   </body>
 
   <script>
@@ -59,6 +64,7 @@
           wallet_snap: { [snapId]: {} },
         }]
       })
+      getAddresses()
     }
 
     // here we call the snap's "hello" method
@@ -89,11 +95,9 @@
         console.error(err)
         alert('Problem happened: ' + err.message || err)
       }
-      let container = document.createElement('pre'); 
-      container.textContent = ''+response.map(function(item){
+      document.getElementById('addressBook').textContent = ''+response.map(function(item){
           return `${item.name}: ${item.address}`; 
         }).join("\n"); 
-      document.body.append(container); 
     }
 
     const storeAddressForm = document.getElementById('storeAddress')
@@ -114,6 +118,7 @@
             addressToStore: address
           }]
         })
+        getAddresses()
       } catch (err) { 
         console.error(err)
         alert('Problem happened: ' + err.message || err)

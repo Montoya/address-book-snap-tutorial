@@ -24,7 +24,7 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
         method: 'snap_manageState', 
         params: ['update', state], 
       }); 
-      return wallet.request({
+      /*return wallet.request({
         method: 'snap_confirm', 
         params: [
           {
@@ -37,7 +37,8 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
               `Addresses in book: ${state.book.length}`,  
           }, 
         ], 
-      }); 
+      });*/
+      return true; 
     case 'retrieveAddresses': 
       return state.book; 
     case 'hello':

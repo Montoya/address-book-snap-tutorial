@@ -225,7 +225,7 @@ default:
 
 This code does a quick string conversion of the address book object (`map` each object in the array, then `join` the array) and outputs that in the `textAreaContent` field of the confirmation window. Build the Snap, connect to the Dapp, and click the "Send Hello" button to see the result: 
 
-<img src="tutorial-assets/tutorial-show-addresses.png" width="362" height="284" alt="Third Confirmation Attempt">
+<img src="tutorial-assets/tutorial-show-addresses.png" width="362" height="284" alt="See addresses in confirmation">
 
 Note that you did not need to add addresses to the address book again before showing the addresses that are stored. The addresses you added earlier were persisted even after updating the Snap! The data was fetched with this code which you added earlier in this tutorial: 
 
@@ -261,7 +261,19 @@ Add a button to `index.html` to retrieve addresses:
 <form id="storeAddress">
 ```
 
-And add the following code to the script section of `index.html` to retrieve and display the address book inside the Dapp: 
+And add a container before the closing `body` tag to display the address book: 
+
+```HTML
+  </form>
+
+  <div>
+    <p>My address book</p>
+    <pre id="addressBook"></pre>
+  </div>
+</body>
+```
+
+Add the following code to the script section of `index.html` to retrieve and display the address book inside the Dapp: 
 
 ```JavaScript
 const connectButton = document.querySelector('button.connect')
@@ -287,18 +299,85 @@ async function getAddresses () {
     console.error(err)
     alert('Problem happened: ' + err.message || err)
   }
-  let container = document.createElement('pre'); 
-  container.textContent = ''+response.map(function(item){
+  document.getElementById('addressBook').textContent = ''+response.map(function(item){
       return `${item.name}: ${item.address}`; 
     }).join("\n"); 
-  document.body.append(container); 
 }
 ```
 
 This is very similar to the other button handlers, but instead of just invoking a Snap request, it captures the response from that request and then injects it into the Dapp webpage. Build and run the Snap again, refresh the Dapp page, click "Connect" and click "Get Addresses." You will see a result like the following: 
 
-<img src="tutorial-assets/tutorial-inject-addresses.png" width="574" height="459" alt="Third Confirmation Attempt">
+<img src="tutorial-assets/tutorial-inject-addresses.png" width="572" height="510" alt="Injected addresses">
 
 You now have a very simple API for making an address book avialable to Dapps. While this is far from being an elegant approach to making an address book inside of MetaMask, you have the foundation for storing and retrieving data with a custom Snap. Read on for some ideas on how to make this more elegant and secure. 
 
-_Coming soon..._
+### Making the Dapp more responsive
+
+One way to make the Dapp more responsive is to load the address book as soon as you connect. Just add `getAddresses()` to the end of the "Connect" handler: 
+
+```JavaScript
+async function connect () {
+  await ethereum.request({
+    method: 'wallet_enable',
+    params: [{
+      wallet_snap: { [snapId]: {} },
+    }]
+  })
+  getAddresses()
+}
+```
+
+Another is to refresh the in-page address book each time you add a new address. Same approach, add `getAddresses()` right after the call to store an address in the form handler: 
+
+```JavaScript
+async function storeAddress (e) {
+  e.preventDefault() // to prevent default form behavior 
+
+  const name = document.getElementById('nameToStore').value
+  const address = document.getElementById('addressToStore').value
+
+  try { 
+    const response = await ethereum.request({
+      method: 'wallet_invokeSnap', 
+      params: [snapId, {
+        method: 'storeAddress',
+        nameToStore: name, 
+        addressToStore: address
+      }]
+    })
+    getAddresses()
+  } catch (err) { 
+    console.error(err)
+    alert('Problem happened: ' + err.message || err)
+  }
+}
+```
+
+This will update the in-page address book as soon as you Approve, Reject or dismiss the confirmation window that pops up. However, since you now have the address book being displayed and updated in real-time inside the Dapp, you could skip using the confirmation window entirely, like so: 
+
+```JavaScript
+switch (requestObject.method) {
+  case 'storeAddress': 
+    state.book.push({
+      name:requestObject.nameToStore,
+      address:requestObject.addressToStore
+    });
+    await wallet.request({
+      method: 'snap_manageState', 
+      params: ['update', state], 
+    }); 
+    return true; 
+  case 'retrieveAddresses': 
+```
+
+Now, the Snap will quietly update the state in the background, and you will immediately see the address book being updated in-page. Going forward, you could update the `storeAddress` code to make the Snap more useful, by: 
+
+* Checking that the input name and address conforms to some rules, such as "names and addresses can only contain letters and/or numbers" and "addresses must map to various protocol standards (depending on which blockchains you wish to support)." 
+* Check for duplicate names and addresses. Right now it's possible to add the same name multiple times, which is not very useful. One option would be to filter the existing data to check if the user is adding something that is already there, and either update it or return an error. 
+* Use a data type that is more useful than an array, to enable easier lookup, soring, etc. 
+
+Also, right now the Snap is not secure - any Dapp could add or change addresses, even without the user's permission! This could open the user up to attacks, tricking them into sending cryptocurrency to the wrong address. One way to fix this is to publish the address book manager to a specific domain, like "myaddressbook.xyz," and then check the `originString` in the `storeAddress` case to make sure that the request is coming from this domain. This way, as long as you retain control of domain, only your Dapp at that domain can make changes to the address book data. Another way to fix this is to require the confirmation window in the control flow for storing addresses, and only store the address if the user clicks approve. This way, the user will always get an explicit popup when an address update is attempted, will see the data that is being added or updated, and will have the option to explicitly allow or deny that change. Any Dapp could provide the functionality to add or update addresses, but the user would still be in control of storing data. 
+
+Lastly, the Dapp interface could be made more useful by allowing the user to update or remove individual addresses, sort addresses (with an update to the address book made each time the user changes the order), and interact with these address (like adding a send button to open the send flow in MetaMask for that address). With the native MetaMask APIs you can create a fully-featured address book Dapp for managing addresses and interacting with those addresses, even displaying information for each address such as balance or last transaction, in a way that preserves the privacy and anonymity of the end user (because the stored data is visible only to the user's device, not to you or MetaMask, and the user has full control of when and how they store and view that data). 
+
+_An example Snap and Dapp with these improvements will be made available soon._
