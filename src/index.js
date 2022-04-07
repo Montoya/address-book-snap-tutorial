@@ -1,6 +1,6 @@
 wallet.registerRpcMessageHandler(async (originString, requestObject) => {
 
-  const state = await wallet.request({
+  let state = await wallet.request({
     method: 'snap_manageState',
     params: ['get'],
   });
@@ -15,18 +15,13 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
 
   switch (requestObject.method) {
     case 'storeAddress': 
-      let state = await wallet.request({
-        method: 'snap_manageState', 
-        params: ['get'], 
-      }); 
-      let address_book = state.book; 
-      address_book.push({
+      state.book.push({
         name:requestObject.nameToStore,
         address:requestObject.addressToStore
       });
       await wallet.request({
         method: 'snap_manageState', 
-        params: ['update', {book:address_book}], 
+        params: ['update', state], 
       }); 
       return wallet.request({
         method: 'snap_confirm', 
@@ -38,20 +33,21 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
             textAreaContent: 
               `Name: ${requestObject.nameToStore}\n`+
               `Address: ${requestObject.addressToStore}\n`+
-              `Addresses in book: ${address_book.length}`,  
+              `Addresses in book: ${state.book.length}`,  
           }, 
         ], 
       }); 
     case 'hello':
+      let address_book = state.book.map(function(item){
+          return `${item.name}: ${item.address}`; 
+        }).join("\n"); 
       return wallet.request({
         method: 'snap_confirm',
         params: [
           {
             prompt: `Hello, ${originString}!`,
-            description:
-              'This custom confirmation is just for display purposes.',
-            textAreaContent:
-              'But you can edit the snap source code to make it do something, if you want to!',
+            description: 'Address book:',
+            textAreaContent: address_book,
           },
         ],
       });

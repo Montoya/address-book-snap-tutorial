@@ -156,24 +156,19 @@ Next, add some code to store the name and address from the form before displayin
 ```Javascript
 switch (requestObject.method) {
   case 'storeAddress': 
-    let state = await wallet.request({
-      method: 'snap_manageState', 
-      params: ['get'], 
-    }); 
-    let address_book = state.book; 
-    address_book.push({
+    state.book.push({
       name:requestObject.nameToStore,
       address:requestObject.addressToStore
     });
     await wallet.request({
       method: 'snap_manageState', 
-      params: ['update', {book:address_book}], 
+      params: ['update', state], 
     }); 
     return wallet.request({
       method: 'snap_confirm', 
 ```
 
-This code gets the currently stored address book, adds the new name and address to the end of the array, and then stores that back into the state. 
+This code adds the new name and address to the end of the address book, and then updates the wallet state. 
 
 Finally, display the result of this request in the confirmation window: 
 
@@ -188,7 +183,7 @@ Finally, display the result of this request in the confirmation window:
         textAreaContent: 
           `Name: ${requestObject.nameToStore}\n`+
           `Address: ${requestObject.addressToStore}\n`+
-          `Addresses in book: ${address_book.length}`,  
+          `Addresses in book: ${state.book.length}`,  
       }, 
     ], 
   }); 
@@ -205,3 +200,32 @@ You can continue adding addresses and clicking Save, and the number of addresses
 
 So far, so good! The next step is to try retrieving this data and using it. 
 
+### Getting Stored Addresses
+
+The simplest way to view the stored addresses is to output the array in another confirmation window. Update the `hello` case to do this: 
+
+```Javascript
+case 'hello':
+  let address_book = state.book.map(function(item){
+      return `${item.name}: ${item.address}`; 
+    }).join("\n"); 
+  return wallet.request({
+    method: 'snap_confirm',
+    params: [
+      {
+        prompt: `Hello, ${originString}!`,
+        description: 'Address book:',
+        textAreaContent: address_book,
+      },
+    ],
+  });
+default:
+```
+
+This code does a quick string conversion of the address book object (`map` each object in the array, then `join` the array) and outputs that in the `textAreaContent` field of the confirmation window. Build the Snap, connect to the Dapp, and click the "Send Hello" button to see the result: 
+
+<img src="tutorial-assets/tutorial-show-addresses.png" width="362" height="284" alt="Third Confirmation Attempt">
+
+Note that you do not need to add addresses to the address book again before showing the addresses that are stored. The data in the wallet state is persisted even after updating the Snap! As the Snap developer, you can manage this data &mdash; it's up to you to decide when to clear this data. 
+
+So now you have everything you need to store and retrieve data in a Snap! Read on to learn how to make this Snap a bit more useful. 
