@@ -309,7 +309,7 @@ This is very similar to the other button handlers, but instead of just invoking 
 
 <img src="tutorial-assets/tutorial-inject-addresses.png" width="572" height="510" alt="Injected addresses">
 
-You now have a very simple API for making an address book avialable to Dapps. While this is far from being an elegant approach to making an address book inside of MetaMask, you have the foundation for storing and retrieving data with a custom Snap. Read on for some ideas on how to make this more elegant and secure. 
+You now have a very simple API for making an address book available to Dapps. While this is far from being an elegant approach to making an address book inside of MetaMask, you have the foundation for storing and retrieving data with a custom Snap. Read on for some ideas on how to make this more elegant and secure. 
 
 ### Making the Dapp more responsive
 
