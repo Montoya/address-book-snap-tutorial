@@ -1,6 +1,6 @@
 wallet.registerRpcMessageHandler(async (originString, requestObject) => {
 
-  const state = await wallet.request({
+  let state = await wallet.request({
     method: 'snap_manageState',
     params: ['get'],
   });
