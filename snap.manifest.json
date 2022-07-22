@@ -1,18 +1,18 @@
 {
-  "version": "0.7.0",
-  "proposedName": "MetaMask Template Snap",
-  "description": "A MetaMask Snap template.",
+  "version": "0.7.1",
+  "proposedName": "Address Book Snap",
+  "description": "An example snap for storing address book entries.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/snap-template.git"
+    "url": "https://github.com/Montoya/address-book-snap-tutorial.git"
   },
   "source": {
-    "shasum": "YAAn9OUyXDE2eB33slijKTQBYPFkBKOA9t9mwDNlQ7k=",
+    "shasum": "zKdTkS9rn6P2r73G52WuMSxl6KyFNvt5mO2S+9EabvM=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
         "iconPath": "images/icon.svg",
-        "packageName": "@metamask/template-snap",
+        "packageName": "@metamask/address-book-snap",
         "registry": "https://registry.npmjs.org/"
       }
     }
