@@ -89,19 +89,19 @@ async function storeAddress (e) {
 Finally, add a case to `src/index.js` to handle receiving this request: 
 
 ```Javascript
-wallet.registerRpcMessageHandler(async (originString, requestObject) => {
-  switch (requestObject.method) {
+module.exports.onRpcRequest = async ({ origin, request }) => {
+  switch (request.method) {
     case 'storeAddress': 
       return wallet.request({
         method: 'snap_confirm', 
         params: [
           {
-            prompt: `Hello, ${originString}!`, 
+            prompt: `Hello, ${origin}!`, 
             description: 
               'This custom confirmation is just for display purposes.',
             textAreaContent: 
-              `Name to store: ${requestObject.nameToStore}\n`+
-              `Address to store: ${requestObject.addressToStore}`, 
+              `Name to store: ${request.nameToStore}\n`+
+              `Address to store: ${request.addressToStore}`, 
           }, 
         ], 
       }); 
@@ -131,7 +131,7 @@ This is great, but the goal is not to just show the inputs. The goal is to store
 First, initialize the Snap's state with an empty address book. Add the following code in `src/index.js`: 
 
 ```Javascript
-wallet.registerRpcMessageHandler(async (originString, requestObject) => {
+module.exports.onRpcRequest = async ({ origin, request }) => {
 
   let state = await wallet.request({
     method: 'snap_manageState',
@@ -147,7 +147,7 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
     });
   }
 
-  switch (requestObject.method) {
+  switch (request.method) {
 ```
 
 This code retrieves the current data stored in the Snap's state, and if that data is not set, initalizes it with an object containing an empty array for the address book: `{book:[]}`. Note that `await` is used because these `wallet.request` calls are normally asynchronous but they need to be executed synchronously here. 
@@ -155,7 +155,7 @@ This code retrieves the current data stored in the Snap's state, and if that dat
 Next, add some code to store the name and address from the form before displaying the confirmation window: 
 
 ```Javascript
-switch (requestObject.method) {
+switch (request.method) {
   case 'storeAddress': 
     state.book.push({
       name:requestObject.nameToStore,
@@ -178,12 +178,12 @@ Finally, display the result of this request in the confirmation window:
     method: 'snap_confirm', 
     params: [
       {
-        prompt: `Hello, ${originString}!`, 
+        prompt: `Hello, ${origin}!`, 
         description: 
           'The address has been saved to your address book',
         textAreaContent: 
-          `Name: ${requestObject.nameToStore}\n`+
-          `Address: ${requestObject.addressToStore}\n`+
+          `Name: ${request.nameToStore}\n`+
+          `Address: ${request.addressToStore}\n`+
           `Addresses in book: ${state.book.length}`,  
       }, 
     ], 
@@ -214,7 +214,7 @@ case 'hello':
     method: 'snap_confirm',
     params: [
       {
-        prompt: `Hello, ${originString}!`,
+        prompt: `Hello, ${origin}!`,
         description: 'Address book:',
         textAreaContent: address_book,
       },
@@ -356,11 +356,11 @@ async function storeAddress (e) {
 This will update the in-page address book as soon as you Approve, Reject or dismiss the confirmation window that pops up. However, since you now have the address book being displayed and updated in real-time inside the Dapp, you could skip using the confirmation window entirely, like so: 
 
 ```JavaScript
-switch (requestObject.method) {
+switch (request.method) {
   case 'storeAddress': 
     state.book.push({
-      name:requestObject.nameToStore,
-      address:requestObject.addressToStore
+      name:request.nameToStore,
+      address:request.addressToStore
     });
     await wallet.request({
       method: 'snap_manageState', 
@@ -382,4 +382,4 @@ Lastly, the Dapp interface could be made more useful by allowing the user to upd
 
 _An example Snap and Dapp with these improvements will be made available for reference soon._
 
-Now that you've come this far, check out the [Password Manager](https://github.com/ritave/snap-passwordManager) snap which uses encryption to store usernames and passwords security inside of a Snap!
+Now that you've come this far, check out the [Password Manager](https://github.com/ritave/snap-passwordManager) snap which uses encryption to store usernames and passwords securely inside of a Snap!

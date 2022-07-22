@@ -1,4 +1,4 @@
-wallet.registerRpcMessageHandler(async (originString, requestObject) => {
+module.exports.onRpcRequest = async ({ origin, request }) => {
 
   let state = await wallet.request({
     method: 'snap_manageState',
@@ -14,11 +14,11 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
     });
   }
 
-  switch (requestObject.method) {
+  switch (request.method) {
     case 'storeAddress': 
       state.book.push({
-        name:requestObject.nameToStore,
-        address:requestObject.addressToStore
+        name:request.nameToStore,
+        address:request.addressToStore
       });
       await wallet.request({
         method: 'snap_manageState', 
@@ -28,12 +28,12 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
         method: 'snap_confirm', 
         params: [
           {
-            prompt: `Hello, ${originString}!`, 
+            prompt: `Hello, ${origin}!`, 
             description: 
               'The address has been saved to your address book',
             textAreaContent: 
-              `Name: ${requestObject.nameToStore}\n`+
-              `Address: ${requestObject.addressToStore}\n`+
+              `Name: ${request.nameToStore}\n`+
+              `Address: ${request.addressToStore}\n`+
               `Addresses in book: ${state.book.length}`,  
           }, 
         ], 
@@ -49,7 +49,7 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
         method: 'snap_confirm',
         params: [
           {
-            prompt: `Hello, ${originString}!`,
+            prompt: `Hello, ${origin}!`,
             description: 'Address book:',
             textAreaContent: address_book,
           },
@@ -58,4 +58,4 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
     default:
       throw new Error('Method not found.');
   }
-});
+};
