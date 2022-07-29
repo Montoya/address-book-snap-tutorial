@@ -158,8 +158,8 @@ Next, add some code to store the name and address from the form before displayin
 switch (request.method) {
   case 'storeAddress': 
     state.book.push({
-      name:requestObject.nameToStore,
-      address:requestObject.addressToStore
+      name:request.nameToStore,
+      address:request.addressToStore
     });
     await wallet.request({
       method: 'snap_manageState', 
