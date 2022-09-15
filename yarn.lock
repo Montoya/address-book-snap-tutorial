@@ -1808,10 +1808,10 @@
     web3 "^0.20.7"
     web3-provider-engine "^16.0.3"
 
-"@metamask/eslint-config-jest@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@metamask/eslint-config-jest/-/eslint-config-jest-8.0.0.tgz#1433c2dffbd60239430ea789c71df11e94872a1c"
-  integrity sha512-m2/crRcaiRO8z6NC04+AudfjgIXvdrUy2oDjecjELa3nmgkJ+cVemCfioREpjaXoXW/soNImZXbgLrA98uQ6ig==
+"@metamask/eslint-config-jest@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@metamask/eslint-config-jest/-/eslint-config-jest-10.0.0.tgz#8b4bdf1168cb1f283fd948609c49b0b5fe0916dd"
+  integrity sha512-wbD8F4a2vCVluDsJvWraRdkvHwoKQ1ugJmeBf3YvacQJoYs5eSVkDQvvcmLLj0Je9GvZ5AX3h7aJPiZ2tujxQA==
 
 "@metamask/eslint-config-nodejs@^8.0.0":
   version "8.0.0"
