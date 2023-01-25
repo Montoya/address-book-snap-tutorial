@@ -114,8 +114,9 @@
           method: 'wallet_invokeSnap', 
           params: [snapId, {
             method: 'storeAddress',
-            nameToStore: name, 
+            params : {nameToStore: name, 
             addressToStore: address
+            }
           }]
         })
         getAddresses()
