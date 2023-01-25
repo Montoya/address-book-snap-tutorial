@@ -17,8 +17,8 @@ module.exports.onRpcRequest = async ({ origin, request }) => {
   switch (request.method) {
     case 'storeAddress': 
       state.book.push({
-        name:request.nameToStore,
-        address:request.addressToStore
+        name:request.params.nameToStore,
+        address:request.params.addressToStore
       });
       await wallet.request({
         method: 'snap_manageState', 
